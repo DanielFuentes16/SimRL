@@ -7,6 +7,7 @@ import numpy as np
 import cv2
 from IPython.terminal.pt_inputhooks import tk
 from PIL import ImageTk
+from PIL import Image
 
 from SignalRStuff import SignalRStuff
 
@@ -17,7 +18,11 @@ class TkRightPanel:
         self.frame = frame
 
         # Right Frame and its contents
-        self.frameCanvas = Label(self.frame)
+        im = Image.new('RGB', (60, 30), color = 'red')
+        im.save('pil_red.png')
+        self.image = ImageTk.PhotoImage(im)
+
+        self.frameCanvas = Label(self.frame, image = self.image)
         self.frameCanvas.grid(row=0, column=0, padx=10, pady=2)
 
         self.btnFrame = Frame(self.frame, width=200, height=50, borderwidth=1)
@@ -43,13 +48,25 @@ class TkRightPanel:
         #self.show_frame()
 
 
+
     def show_frame(self):
         self.image = self.signalR.GetCurrentImage()
         if self.image != 0:
-
+            self.frameLog.delete('1.0', END)
             imgtk = ImageTk.PhotoImage(image=self.image)
-            self.frameCanvas.imgtk = imgtk
+            #self.frameCanvas.imgtk = imgtk
             self.frameCanvas.configure(image=imgtk)
-        self.frameCanvas.after(10, self.show_frame)
+            self.frameCanvas.image = imgtk
+            #self.frameCanvas.configure(image=imgtk)
+            self.frameLog.insert(0.0, self.signalR.currentId+"\n")
+            self.frameLog.insert(0.0, self.signalR.currentModel+"\n")
+            count = 0
+            for position in self.signalR.currentPositions:
+                count += 1
+                self.frameLog.insert(0.0, str(position)+"\n")
+
+            self.frameLog.insert(0.0, self.signalR.currentId+"\n")
+
+        self.frameCanvas.after(50, self.show_frame)
 
 

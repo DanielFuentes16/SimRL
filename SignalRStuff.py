@@ -18,6 +18,10 @@ class SignalRStuff:
       handler = logging.StreamHandler()
       # handler.setLevel(logging.DEBUG)
       self.currentImage = 0
+      self.currentModel = 0
+      self.currentId = 0
+
+      self.currentPositions = list()
       self.started = False;
       self.connection = HubConnectionBuilder() \
           .with_url(server_url, options={"verify_ssl": False}) \
@@ -61,7 +65,11 @@ class SignalRStuff:
         # reading image
         # image = cv2.imread("Path of image here")
         #Image.fromarray(image)
+        self.currentModel = x["typeModel"]
+        self.currentId = x["idModel"]
+        self.currentPositions = x["jointPositions"]
         self.currentImage = Image.fromarray(image)
+
 
     def GetCurrentImage(self):
         return self.currentImage
